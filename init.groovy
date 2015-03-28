@@ -10,7 +10,8 @@ import jenkins.model.*
 import hudson.security.*
 
 
-// SET SLAVE PORT 
+// SET SLAVE PORT AND NUMBER OF EXECUTORS AT MASTER NODE( im setting it to 5, you may declare it after you know you have enough RAM)
+// Jenkins eats a lot of RAM :D 
 def instance = Jenkins.getInstance()
 instance.setNumExecutors(5)
 instance.setSlaveAgentPort([55000])

@@ -69,3 +69,38 @@ strategy.add(Jenkins.ADMINISTER, "jenkins-job-builder")
 instance.setAuthorizationStrategy(strategy)
 instance.save()
 
+
+
+//// HOW TO GET CREDENTIAL ID OF A GLOBAL CREDENTIAL - PETTY USEFUL IF YOU NEED TO WORK WITH private 
+// github repos , and jenkins need a cred id so that the git scm works properly
+// i really need it since i use jenkins-job-builder to define my jobs, some jobs need access to private github repos, 
+// i createed creds in start of this file (see above), but jenkins-job-builder need to cred id for git scm dfinition.
+// iget it using follwing code, store in a file.. 
+
+// Normal way of creating file objects.We get the creds to be used by jobs who need access to private github repos
+// Above we created global creds , we get their ID, which will then be passed to `git` section of each job
+// under `credentials-id` ..so in short, jenkins git needs a cred ID, and knows the corresponding ssh key it relates to.
+def file1 = new File('/tmp/creds.txt')  
+def file2 = new File('/tmp/jjb.txt')  
+def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
+      com.cloudbees.plugins.credentials.common.StandardUsernameCredentials.class,
+      Jenkins.instance,
+      null,
+      null
+  );
+  for (c in creds) {
+  //     println(c.id + ": " + c.description)
+  // Writing to the files with the write method:
+    file1 << "${c.id}"
+  }
+// here im getting API token of a user , pretty col huh, since JJB needs API token , not the normal password, to talk to jenkins and update/modify jobs
+
+//j.jenkins.setSecurityRealm(j.createDummySecurityRealm());        
+// this assumes user jenkins-job-builder has already been created...as i have done above in same file..
+// to get api token of user foo , do it as " User.get('foo')
+// cheers :)
+User u = User.get("jenkins-job-builder")  
+ApiTokenProperty t = u.getProperty(ApiTokenProperty.class)  
+def token = t.getApiToken()
+// token.getClass()
+file2 << "${token}"

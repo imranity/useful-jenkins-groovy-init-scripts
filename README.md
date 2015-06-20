@@ -5,7 +5,7 @@ Jenkins starts.
 
 ## How this works?
 
-The jenkins server automatically looks for `groovy.d` folder under the home dir of where Jenkins run from e.g. `/var/lib/jenkins/groovy.d` a
+The jenkins server automatically looks for `groovy.d` folder under the home dir of where Jenkins run from e.g. `/var/lib/jenkins/groovy.d` 
 and any groovy script in folder get executed anytime jenkins starts. 
 
 ## Why use the scripts?
@@ -16,7 +16,7 @@ Groovy is an easy way of calling Jenkins base classes of Java without getting to
 
 ## What scripts are in this repo?
 
-I have scripts for : 
+I have scripts for :  
 1. Creating user accounts 
 2. Creating global credentials (for ssh , username/password etc)
 3. Getting the API key of a user ( this is pretty useful because if you use (Jenkins Job Builder )[https://github.com/openstack-infra/jenkins-job-builder.git] for setting up

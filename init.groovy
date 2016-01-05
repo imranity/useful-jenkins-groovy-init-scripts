@@ -67,6 +67,14 @@ strategy.add(Item.CREATE,'jenkins-job-builder')
 strategy.add(Item.DELETE,'jenkins-job-builder')
 strategy.add(Jenkins.ADMINISTER, "swarm-slave")
 strategy.add(Jenkins.ADMINISTER, "jenkins-job-builder")
+// declare who can launch a slave (using awarm client ) and configure the slaves
+// add slave launch permissions to svc 
+// info found from http://javadoc.jenkins-ci.org/hudson/security/class-use/Permission.html#jenkins.slaves
+strategy.add(Computer.BUILD,'swarm-slave')
+strategy.add(Computer.CONFIGURE,'swarm-slave')
+strategy.add(Computer.CONNECT,'swarm-slave')
+strategy.add(Computer.CREATE,'swarm-slave')
+strategy.add(Computer.DISCONNECT,'swarm-slave')
 instance.setAuthorizationStrategy(strategy)
 instance.save()
 

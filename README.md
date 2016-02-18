@@ -1,18 +1,17 @@
 # Useful Jenkins groovy init Scripts
 
-As you may have known, Jenkins allows adding groovy scripts initialization scripts, which means these scripts will run every time  
-Jenkins starts.  
+Jenkins allows adding groovy scripts for initialization, which means these scripts will run every time Jenkins starts.  
 
 ## How this works?
 
-The jenkins server automatically looks for `groovy.d` folder under the home dir of where Jenkins run from e.g. `/var/lib/jenkins/groovy.d` 
-and any groovy script in folder get executed anytime jenkins starts. 
+The jenkins server automatically looks for `groovy.d` folder under the home dir of where Jenkins run from e.g. `/var/lib/jenkins/groovy.d` or `/root/.jenkins/groovy.d` if running in a container, and any groovy script in folder get executed anytime jenkins starts. 
 
 ## Why use the scripts?
 
 Its a pretty handy way of automating Jenkins installation; lets say you want your CI setup to be automated, like everytime you 
-install your jenkins environment, it should be pre-configured with certain user accounts created, some global properties set.  
-Groovy is an easy way of calling Jenkins base classes of Java without getting to know much of Java itself )
+install your jenkins environment, it should be pre-configured with certain user accounts created, have LDAP configured automatically or some global properties set.  
+
+Groovy is an easy way of calling Jenkins base classes of Java without getting to know much of Java itself ;)
 
 ## What scripts are in this repo?
 

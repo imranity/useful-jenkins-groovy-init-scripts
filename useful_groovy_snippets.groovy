@@ -86,7 +86,7 @@ import jenkins.model.*;
     def token = null
     def tokenProperty = user.getProperty(jenkins.security.ApiTokenProperty.class)
     if (tokenProperty != null) {
-        token = tokenProperty.getApiToken()
+        token = tokenProperty.getApiTokenInsecure()
     }
     
     def builder = new groovy.json.JsonBuilder()

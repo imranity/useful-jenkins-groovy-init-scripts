@@ -110,6 +110,7 @@ def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredenti
 // cheers :)
 User u = User.get("jenkins-job-builder")  
 ApiTokenProperty t = u.getProperty(ApiTokenProperty.class)  
-def token = t.getApiToken()
+// use admin account to retrieve API token of any user
+def token = t.getApiTokenInsecure()
 // token.getClass()
 file2 << "${token}"

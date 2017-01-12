@@ -15,6 +15,23 @@ import hudson.security.*
 def instance = Jenkins.getInstance()
 instance.setNumExecutors(5)
 instance.setSlaveAgentPort([55000])
+
+// Create a SSH key based global credential , the key is stored in master, here i assume my key already exists on master at 
+// location `/root/.ssh/id_rsa` 
+  String keyfile = "/root/.ssh/id_rsa"
+global_domain = Domain.global()
+credentials_store =
+Jenkins.instance.getExtensionList(
+'com.cloudbees.plugins.credentials.SystemCredentialsProvider'
+)[0].getStore()
+credentials = new BasicSSHUserPrivateKey(
+CredentialsScope.GLOBAL,
+null,
+"root",
+ new BasicSSHUserPrivateKey.FileOnMasterPrivateKeySource(keyfile),
+"",
+"")
+credentials_store.addCredentials(global_domain, credentials)
 // Create a global credential to work with git, this is needed to access the git related jobs.
 // which means all the jobs, since all our jobs are somewhat working with git :)
 // This assumes there is a ssh private key in /root/.ssh/ which i actually added in dockerfile , no need to worry
@@ -36,18 +53,17 @@ credentials_store.addCredentials(global_domain, credentials)
 // NOW TIME TO CONFIGURE GLOBAL SECURITY
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
 //  sample LDAP setup
-// Reference : Under 'Constructor Detail' section in http://javadoc.jenkins-ci.org/hudson/security/LDAPSecurityRealm.html
-
-/*
-def hudsonRealm = new LDAPSecurityRealm('tes','test','test','test','test','test','ldap',false)
-*/
-//  Please note createAccount is only a feature in PrivateSecurityRealm, which is type of security that allows using private jenkins
-//  database for users and password
-//  Passing 'false' in above instance creation actually means : allowSignup=false 
-//  to allow signup , do something like this :
-/*
- def testRealm = new HudsonPrivateSecurityRealm(true)
-*/
+String server = 'ldap://mycompany.com'
+String rootDN = 'dc=company,dc=com'
+String userSearchBase = ''
+String userSearch = 'uid={0}'
+String groupSearchBase = ''
+String managerDN = 'cn=System,ou=people,dc=company,dc=com'
+String passcode = 'passwordofSystem'
+boolean inhibitInferRootDN = true
+SecurityRealm ldap_realm = new LDAPSecurityRealm(server, rootDN, userSearchBase, userSearch, groupSearchBase, managerDN, passcode, inhibitInferRootDN) 
+instance.setSecurityRealm(ldap_realm)
+instance.save()
 
 //FOLLOWING IS THE ACTUAL SETUP NEEDED FOR JJB AND SWARM SLAVES
 hudsonRealm.createAccount("swarm-slave","boguspassword")
@@ -111,6 +127,8 @@ def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredenti
 User u = User.get("jenkins-job-builder")  
 ApiTokenProperty t = u.getProperty(ApiTokenProperty.class)  
 // use admin account to retrieve API token of any user
-def token = t.getApiTokenInsecure()
+// NOTE: jenkins has changed the way to get api token , only a user logged in as itself will be able to retrieve its token
+// refer : http://stackoverflow.com/questions/37035319/as-a-jenkins-administrator-how-do-i-get-a-users-api-token-without-logging-in-a
+def token = t.getApiToken()
 // token.getClass()
 file2 << "${token}"
